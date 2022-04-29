@@ -32,30 +32,36 @@ class _FetchingComplexDataState extends State<FetchingComplexData> {
         ),
         body: Consumer<Complex>(
           builder: (context, value, child) {
-            return swipeRefresh(
-                controller: productProvider.refreshController,
-                onRefresh: productProvider.refreshPage,
-                onLoading: productProvider.onLoading,
-                children: [
-                  value.complexModel!.data.isEmpty && !value.error
-                      ? const Center(child: CircularProgressIndicator())
-                      : value.error
-                          ? Text(value.errorMessage)
-                          : ListView.builder(
-                              padding: const EdgeInsets.all(0),
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: value.complexModel!.data.length,
-                              itemBuilder: (context, index) {
-                                return Card(
-                                    margin: const EdgeInsets.symmetric(
-                                        horizontal: 10.0, vertical: 15.0),
-                                    elevation: 10,
-                                    child: Text(value
-                                        .complexModel!.data[index].id
-                                        .toString()));
-                              }),
-                ]);
+            if (value.complexModel != null) {
+              return swipeRefresh(
+                  controller: productProvider.refreshController,
+                  onRefresh: productProvider.refreshPage,
+                  onLoading: productProvider.onLoading,
+                  children: [
+                    value.complexModel!.data.isEmpty && !value.error
+                        ? const Center(child: CircularProgressIndicator())
+                        : value.error
+                            ? Text(value.errorMessage)
+                            : ListView.builder(
+                                padding: const EdgeInsets.all(0),
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: value.complexModel!.data.length,
+                                itemBuilder: (context, index) {
+                                  return Card(
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 10.0, vertical: 15.0),
+                                      elevation: 10,
+                                      child: Text(value
+                                          .complexModel!.data[index].id
+                                          .toString()));
+                                }),
+                  ]);
+            } else {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
           },
         ));
   }
