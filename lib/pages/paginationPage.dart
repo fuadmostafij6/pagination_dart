@@ -49,17 +49,17 @@ class _PaginationPageState extends State<PaginationPage> {
                           itemBuilder: (context, index) {
                             if (index < value.list.length) {
                               return SizedBox(
-                                height: 100,
-                                child: Card(
-                                  margin: const EdgeInsets.symmetric(
-                                      horizontal: 10.0, vertical: 15.0),
-                                  elevation: 10,
-                                  child: Center(
-                                    child: Text(
-                                        value.list[index]["author"].toString()),
-                                  ),
-                                ),
-                              );
+                                  height: 100,
+                                  child: Card(
+                                    margin: const EdgeInsets.symmetric(
+                                        horizontal: 10.0, vertical: 15.0),
+                                    elevation: 10,
+                                    child: Center(
+                                      child: Text(
+                                        value.list[index].id.toString(),
+                                      ),
+                                    ),
+                                  ));
                             } else {
                               print(productProvider.hasMore);
                               return Center(

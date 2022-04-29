@@ -1,5 +1,7 @@
+import 'package:fetch/pages/complexDataFetch.dart';
 import 'package:fetch/pages/home.dart';
 import 'package:fetch/pages/paginationPage.dart';
+import 'package:fetch/providers/complexJsonProvider.dart';
 import 'package:fetch/providers/paginationProvider.dart';
 import 'package:fetch/providers/provider.dart';
 import 'package:flutter/material.dart';
@@ -10,7 +12,8 @@ void main() {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ProductProvider()),
-        ChangeNotifierProvider(create: (_) => PaginationProvider())
+        ChangeNotifierProvider(create: (_) => PaginationProvider()),
+        ChangeNotifierProvider(create: (_) => Complex())
       ],
       child: const MyApp(),
     ),
@@ -29,7 +32,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const PaginationPage(),
+      home: const FetchingComplexData(),
     );
   }
 }
