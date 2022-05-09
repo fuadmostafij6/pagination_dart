@@ -1,65 +1,46 @@
-import 'dart:async';
 import 'dart:convert';
+import 'package:fetch/models/productModel.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 
-import '../models/paginationModel.dart';
+import '../models/complexModel.dart';
 
-class PaginationProvider with ChangeNotifier {
+class ProductProvider with ChangeNotifier {
   BuildContext? context;
-  PaginationModel? paginationModel;
-  List<PaginationModel> _list = [];
+  ProductModel? productModel;
+
+  Map<String, dynamic> _map = {};
   bool _error = false;
 
-  bool _hasMore = true;
   String _errorMessage = "";
-  List<PaginationModel> get list => _list;
+  Map<String, dynamic> get map => _map;
   bool get error => _error;
-  int page = 1;
   String get errorMessage => _errorMessage;
-  bool get hasMore => _hasMore;
+
   RefreshController refreshController = RefreshController();
-  PaginationProvider() {
+  ProductProvider() {
     fetchData();
   }
 
   void setView(BuildContext context) => this.context = context;
-  setHasMore(bool data) {
-    _hasMore = data;
-    notifyListeners();
-  }
-
   Future fetchData() async {
-    const limit = 10;
     final res = await get(
-      Uri.parse("https://picsum.photos/v2/list?page=$page&limit=$limit"),
-    );
-
+        Uri.parse("https://tajabajar.com/api/v2/flash-deal-products/1"));
+    _map = json.decode(res.body);
     if (res.statusCode == 200) {
       try {
-        // _map = json.decode(res.body);
-        var data = jsonDecode(res.body);
-        // paginationModel = PaginationModel.fromJson(_map);
+        productModel = ProductModel.fromJson(_map);
 
-        List<PaginationModel> newList = [];
-        data.forEach((element) {
-          PaginationModel newData =
-              PaginationModel(id: element["id"], author: element["author"]);
-          newList.add(newData);
-        });
-        _list.addAll(newList);
         _error = false;
-
-        page++;
       } catch (e) {
-        _list = [];
+        _map = {};
         _error = true;
         _errorMessage = e.toString();
       }
     } else {
       _errorMessage = "May Be Internet Issue";
-      _list = [];
+      _map = {};
     }
     refreshController.refreshCompleted();
 
@@ -69,7 +50,7 @@ class PaginationProvider with ChangeNotifier {
   void refreshPage() {
     _error = true;
     _errorMessage = "May Be Internet Issue";
-    _list = [];
+    _map = {};
     fetchData();
     notifyListeners();
   }
@@ -77,13 +58,13 @@ class PaginationProvider with ChangeNotifier {
   void onLoading() {
     _error = true;
     _errorMessage = "May Be Internet Issue";
-    _list = [];
+    _map = {};
     fetchData();
     notifyListeners();
   }
 
   void initialValues() {
-    _list = [];
+    _map = {};
     _errorMessage = "";
     _error = false;
     notifyListeners();

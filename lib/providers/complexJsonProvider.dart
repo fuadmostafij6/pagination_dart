@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:fetch/Services.dart';
+import 'package:fetch/models/productModel.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
@@ -9,6 +10,7 @@ import '../models/complexModel.dart';
 class Complex with ChangeNotifier {
   BuildContext? context;
   ComplexModel? complexModel;
+  ProductModel? productModel;
   Map<String, dynamic> _map = {};
   bool _error = false;
   List<ComplexModel> _list = [];
@@ -18,9 +20,9 @@ class Complex with ChangeNotifier {
   String get errorMessage => _errorMessage;
   List<ComplexModel> get list => _list;
   RefreshController refreshController = RefreshController();
-  // Complex() {
-  //   fetchData();
-  // }
+  Complex() {
+    fetchData();
+  }
 
   void setView(BuildContext context) => this.context = context;
   Future fetchData() async {
@@ -30,7 +32,7 @@ class Complex with ChangeNotifier {
     _map = json.decode(res.body);
     if (res.statusCode == 200) {
       try {
-        complexModel = ComplexModel.fromJson(_map);
+        productModel = ProductModel.fromJson(_map);
 
         _error = false;
       } catch (e) {

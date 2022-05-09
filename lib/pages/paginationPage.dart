@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../models/paginationModel.dart';
 import '../providers/paginationProvider.dart';
 import 'home.dart';
 
@@ -15,12 +16,16 @@ class PaginationPage extends StatefulWidget {
 class _PaginationPageState extends State<PaginationPage> {
   PaginationProvider productProvider = PaginationProvider();
   final _controller = ScrollController();
+  List<PaginationModel> _list = [];
   @override
   void initState() {
     productProvider.fetchData();
+    _list.addAll(productProvider.list);
     _controller.addListener(() {
       if (_controller.position.maxScrollExtent == _controller.offset) {
         productProvider.fetchData();
+
+        _list.addAll(productProvider.list);
       }
     });
     super.initState();
@@ -37,7 +42,7 @@ class _PaginationPageState extends State<PaginationPage> {
         body: Center(
           child: Consumer<PaginationProvider>(
             builder: (context, value, child) {
-              return value.list.isEmpty && !value.error
+              return _list.isEmpty && !value.error
                   ? const Center(child: CircularProgressIndicator())
                   : value.error
                       ? Text(value.errorMessage)
@@ -45,9 +50,9 @@ class _PaginationPageState extends State<PaginationPage> {
                           controller: _controller,
                           padding: const EdgeInsets.all(0),
                           shrinkWrap: true,
-                          itemCount: value.list.length + 1,
+                          itemCount: _list.length + 1,
                           itemBuilder: (context, index) {
-                            if (index < value.list.length) {
+                            if (index < _list.length) {
                               return SizedBox(
                                   height: 100,
                                   child: Card(
@@ -56,14 +61,13 @@ class _PaginationPageState extends State<PaginationPage> {
                                     elevation: 10,
                                     child: Center(
                                       child: Text(
-                                        value.list[index].id.toString(),
+                                        _list[index].id.toString(),
                                       ),
                                     ),
                                   ));
                             } else {
-                              print(productProvider.hasMore);
                               return Center(
-                                child: productProvider.hasMore
+                                child: index > _list.length
                                     ? const CircularProgressIndicator()
                                     : const Text("No More Data"),
                               );
